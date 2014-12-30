@@ -260,19 +260,17 @@ def regex(exp, flags=0):
 
 whitespace = regex(r'\s+')
 
-@Parser
-def letter(stream, index):
-    if index < len(stream):
-        if stream[index].isalpha():
-            return (True, index+1, stream[index])
-    return (False, index, 'a letter')
-
-@Parser
-def digit(stream, index):
-    if index < len(stream):
-            if stream[index].isdigit():
+def item_matcher(fn, message=None):
+    @Parser
+    def matcher(stream, index):
+        if index < len(stream):
+            if fn(stream[index]):
                 return (True, index+1, stream[index])
-    return (False, index, 'a digit')
+        return (False, index, message)
+    return matcher
+
+letter = item_matcher(str.isalpha, 'a letter')
+digit = item_matcher(str.isdigit, 'a digit')
 
 @Parser
 def eof(stream, index):

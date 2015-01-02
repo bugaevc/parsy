@@ -106,7 +106,7 @@ class Parser(object):
         return self >> success(res)
 
     def many(self):
-        return self.times(0, float('inf'))
+        return self.at_least(0)
 
     def times(self, min, max=None):
         # max=None means exactly min
@@ -139,7 +139,7 @@ class Parser(object):
         return self.times(0, n)
 
     def at_least(self, n):
-        return self.times(n) + self.many()
+        return self.times(n, float('inf'))
 
     def desc(self, description):
         return self | fail(description)

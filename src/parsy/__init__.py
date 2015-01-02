@@ -35,8 +35,8 @@ class Result(namedtuple('Result', 'status index value furthest expected')):
     @staticmethod
     def failure(index, expected): return Result(False, -1, None, index, expected)
 
-    # collect the furthest failure from self and other
     def aggregate(self, other):
+        """Collect the furthest failure from self and other."""
         if not other: return self
         if self.furthest >= other.furthest: return self
 

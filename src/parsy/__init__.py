@@ -194,7 +194,7 @@ def alt(*parsers):
 
     return alt_parser
 
-def seq(*parsers):
+def seq(*parsers, f=None):
     if not parsers:
         return success([])
 
@@ -209,6 +209,8 @@ def seq(*parsers):
             index = result.index
             values.append(result.value)
 
+        if f is not None:
+            values = f(*values)
         return Result.success(index, values).aggregate(result)
 
     return seq_parser

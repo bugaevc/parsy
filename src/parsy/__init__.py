@@ -110,7 +110,7 @@ class Parser(object):
 
     def times(self, min, max=None):
         # max=None means exactly min
-        # min=max=None means from 0 to infinity
+        # max can also be float('inf')
         if max is None:
             max = min
 

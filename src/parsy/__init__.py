@@ -55,9 +55,30 @@ class Parser(object):
 
     def __init__(self, wrapped_fn):
         self.wrapped_fn = wrapped_fn
+        self.recursion_state = None
 
     def __call__(self, stream, index):
-        return self.wrapped_fn(stream, index)
+        old_rec_st = self.recursion_state
+        if old_rec_st is not None and old_rec_st[0] == index:
+            if old_rec_st[1] in (True, False):
+                if old_rec_st[1] is False:
+                    self.recursion_state = (index, True)
+                return Result.failure(index, 'recursion detected')
+            return old_rec_st[1]
+        self.recursion_state = (index, False)
+
+        res = self.wrapped_fn(stream, index)
+
+        if self.recursion_state[1] is True:
+            while True:
+                self.recursion_state = (index, res)
+                new_res = self.wrapped_fn(stream, index)
+                if new_res.status and new_res.index > res.index:
+                    res = new_res
+                else:
+                    break
+        self.recursion_state = old_rec_st
+        return res
 
     def parse(self, string):
         """Parse a string and return the result or raise a ParseError."""

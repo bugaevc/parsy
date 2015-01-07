@@ -43,11 +43,9 @@ def quoted():
 @generate
 def array():
     yield lbrack
-    first = yield value
-    rest = yield (comma >> value).many()
+    elements = yield value.sep_by(comma)
     yield rbrack
-    rest.insert(0, first)
-    return rest
+    return elements
 
 @generate
 def object_pair():
@@ -59,11 +57,9 @@ def object_pair():
 @generate
 def json_object():
     yield lbrace
-    first = yield object_pair
-    rest = yield (comma >> object_pair).many()
+    members = yield object_pair.sep_by(comma)
     yield rbrace
-    rest.insert(0, first)
-    return dict(rest)
+    return dict(members)
 
 value = quoted | number | json_object | array | true | false | null
 

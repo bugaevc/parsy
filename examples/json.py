@@ -60,7 +60,7 @@ def object_pair():
 def json_object():
     yield lbrace
     first = yield object_pair
-    rest = yield (comma >> value).many()
+    rest = yield (comma >> object_pair).many()
     yield rbrace
     rest.insert(0, first)
     return dict(rest)
